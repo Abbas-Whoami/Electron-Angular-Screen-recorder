@@ -5,9 +5,10 @@ let pickerDialog
 
 app.on('ready', () => {
   mainWindow = new BrowserWindow({
-    height: 500,
+    height: 450,
     width: 600
   });
+  mainWindow.setMenuBarVisibility(false);
 
   pickerDialog = new BrowserWindow({
     parent: mainWindow,
