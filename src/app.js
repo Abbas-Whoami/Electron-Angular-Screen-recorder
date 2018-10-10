@@ -1,4 +1,4 @@
-const {desktopCapturer, ipcRenderer, remote} = require('electron')
+const {desktopCapturer, ipcRenderer, remote, BrowserWindow} = require('electron')
 const domify = require('domify')
 
 let localStream
