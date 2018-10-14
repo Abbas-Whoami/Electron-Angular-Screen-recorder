@@ -8,7 +8,7 @@ app.on('ready', () => {
     height: 450,
     width: 600
   });
-  mainWindow.setMenuBarVisibility(false);
+  mainWindow.setMenuBarVisibility(true);
 
   pickerDialog = new BrowserWindow({
     parent: mainWindow,

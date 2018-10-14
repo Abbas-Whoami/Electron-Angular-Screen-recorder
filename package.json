@@ -23,7 +23,10 @@
     "electron-prebuilt": "^1.4.13"
   },
   "dependencies": {
+    "crawler": "^1.2.0",
     "domify": "^1.4.0",
-    "electron": "1.7.9"
+    "electron": "^3.0.4",
+    "electron-screencapture": "^1.1.0",
+    "electron-window-manager": "^1.0.6"
   }
 }

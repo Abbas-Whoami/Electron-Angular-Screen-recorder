@@ -1,5 +1,14 @@
-const {desktopCapturer, ipcRenderer, remote} = require('electron')
+const {ipcRenderer, remote} = require('electron')
 const domify = require('domify')
+const electron = require('electron')
+const desktopCapturer = electron.desktopCapturer;
+const electronScreen = electron.screen;
+const shell = electron.shell;
+const fs = require('fs');
+const os = require('os');
+const path = require('path');
+
+
 
 let localStream
 let microAudioStream
@@ -9,6 +18,7 @@ let recorder
 let includeMic = false
 // let includeSysAudio = false
 document.addEventListener('DOMContentLoaded', () => {
+  document.querySelector('#take-screenshot').addEventListener('click', TakeScreenshot)
   document.querySelector('#record-desktop').addEventListener('click', recordDesktop)
   document.querySelector('#record-camera').addEventListener('click', recordCamera)
   document.querySelector('#record-window').addEventListener('click', recordWindow)
@@ -19,6 +29,38 @@ document.addEventListener('DOMContentLoaded', () => {
   document.querySelector('#play-button').addEventListener('click', play)
   document.querySelector('#download-button').addEventListener('click', download)
 })
+
+const TakeScreenshot = () => {
+
+
+  remote.BrowserWindow.getFocusedWindow().minimize();
+    document.addEventListener("click", function(event){
+      var X = event.clientX;
+      var Y = event.clientY;
+      console.log("The ALT key was pressed!");
+      const thumbSize = DetermainScreenshot();
+      let options = { types: ['screen'], thumnailSize: thumbSize};
+      desktopCapturer.getSources(options, function(error, sources){
+      if(error) return console.log(error.message);
+    
+      sources.forEach(function(source){
+        if(source){
+          const screenshotPath = path.join(os.tmpdir(), 'ScreenShot'+ "X["+X+"]" +"Y["+Y+"]"+'.png');
+    
+          fs.writeFile(screenshotPath, source.thumbnail.toPNG(), function(error){
+            if(error) return console.log('error',error.message);
+            
+    
+            shell.openExternal('file://' + screenshotPath);
+            var screenshotmsg = "Saved Successfully path : " + screenshotPath;
+            console.log(screenshotPath);
+          })
+        }
+      })
+    })
+    })
+ 
+}
 
 const playVideo = () => {
   remote.dialog.showOpenDialog({properties: ['openFile']}, (filename) => {
@@ -207,4 +249,12 @@ const onAccessApproved = (id) => {
     video: { mandatory: { chromeMediaSource: 'desktop', chromeMediaSourceId: id,
       maxWidth: window.screen.width, maxHeight: window.screen.height } }
   }, getMediaStream, getUserMediaError)
+}
+function DetermainScreenshot(){
+  const screensize = electronScreen.getPrimaryDisplay().workAreaSize;
+  const maxDiamension = Math.max(screensize.width, screensize.height);
+  return {
+    width : maxDiamension * window.devicePixelRatio,
+    height : maxDiamension * window.devicePixelRatio  
+  };
 }
